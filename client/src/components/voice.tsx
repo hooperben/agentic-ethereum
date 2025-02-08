@@ -74,7 +74,11 @@ const Dictaphone = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-full">
+      <div className="flex flex-col w-full justify-center text-center">
+        <h2>&apos;{transcript}&apos;</h2>
+      </div>
+
       <div className="flex w-full justify-center">
         <div className="relative h-40 w-40">
           {audioData.map((value, index) => {
@@ -112,7 +116,6 @@ const Dictaphone = () => {
           </div>
         </div>
       </div>
-      <h2>transcript: {transcript}</h2>
     </div>
   );
 };
