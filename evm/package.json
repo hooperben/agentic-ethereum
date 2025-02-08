@@ -1,0 +1,15 @@
+{
+  "name": "evm",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "hardhat": "^2.22.18",
+    "ts-node": "^10.9.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0"
+  }
+}
