@@ -25,7 +25,7 @@ const Account = () => {
 
   if (isConnected && address) {
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 mt-12 w-[50%]">
         <div className="px-4 py-3 bg-gray-100 rounded-lg font-mono text-sm">
           Connected to: {shortenAddress(address)}
         </div>
@@ -33,7 +33,7 @@ const Account = () => {
           onClick={() => disconnect()}
           className="px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors duration-200"
         >
-          Disconnect Wallet
+          Sign Out
         </button>
       </div>
     );
