@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import OnchainProviders from "client/providers/coinbase";
 
 export const metadata: Metadata = {
   title: "Agent Ethereum Hackathon",
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col font-mono">{children}</body>
+      <OnchainProviders>
+        <body className="flex flex-col font-mono">{children}</body>
+      </OnchainProviders>
     </html>
   );
 }
