@@ -1,15 +1,11 @@
 #![cfg_attr(not(test), no_main)]
 extern crate alloc;
 
-use alloc::vec::Vec;
-
 use alloy_primitives::{Address, U160, U256};
-use openzeppelin_stylus::{
-    access::ownable,
-    token::erc20::{extensions::Erc20Metadata, Erc20, IErc20},
-};
+use openzeppelin_stylus::access::ownable;
 use stylus_sdk::{
-    call, contract, msg,
+    call::{self, transfer_eth},
+    contract, msg,
     prelude::{entrypoint, public, sol_interface, storage, SolidityError},
     storage::{StorageMap, StorageU256},
 };
@@ -62,23 +58,83 @@ impl SmartVault {
                 .map_err(|e| Error::TransferFailed(call::Error::from(e)))?;
         }
 
+        let current_balance = self.balances.get(erc20.address).get(msg::sender());
+
         // Increase the balance of the sender
         self.balances
             .setter(erc20.address)
             .setter(msg::sender())
-            .set(amount);
+            .set(current_balance + amount);
 
         Ok(())
     }
 
-    pub fn withdraw(&mut self, erc20: IERC20, amount: U256) -> Result<(), Error> {
+    pub fn withdraw(&mut self, erc20: IERC20, _amount: U256) -> Result<(), Error> {
+        let current_balance = self.balances.get(erc20.address).get(msg::sender());
+
+        let mut amount_to_withdraw = _amount;
+        if current_balance < amount_to_withdraw {
+            amount_to_withdraw = current_balance;
+        }
+
         if erc20.address == self.zero_address() {
-            // self.withdraw_native(amount);
+            transfer_eth(msg::sender(), amount_to_withdraw)
+                .map_err(|e| Error::TransferFailed(call::Error::Revert(e)))?;
         } else {
             erc20
-                .transfer(self, msg::sender(), amount)
+                .transfer(&mut *self, msg::sender(), amount_to_withdraw)
                 .map_err(|e| Error::TransferFailed(call::Error::from(e)))?;
         }
+
+        // Decrease the balance of the sender
+        self.balances
+            .setter(erc20.address)
+            .setter(msg::sender())
+            .set(current_balance - amount_to_withdraw);
+
+        Ok(())
+    }
+
+    pub fn batch_transfer_tokens(
+        &mut self,
+        tokens: Vec<IERC20>,
+        to: Vec<Address>,
+        amounts: Vec<U256>,
+    ) -> Result<(), Error> {
+        for (i, token) in tokens.iter().enumerate() {
+            self.transfer_token(IERC20::new(token.address), to[i], amounts[i])?;
+        }
+
+        Ok(())
+    }
+
+    pub fn transfer_token(
+        &mut self,
+        erc20: IERC20,
+        to: Address,
+        amount: U256,
+    ) -> Result<(), Error> {
+        let current_balance = self.balances.get(erc20.address).get(msg::sender());
+
+        if current_balance < amount {
+            return Err(Error::TransferFailed(call::Error::Revert(
+                b"Insufficient balance".to_vec(),
+            )));
+        }
+
+        // Decrease the balance of the sender
+        self.balances
+            .setter(erc20.address)
+            .setter(msg::sender())
+            .set(current_balance - amount);
+
+        // Increase the balance of the receiver
+        let receiver_balance = self.balances.get(erc20.address).get(to);
+
+        self.balances
+            .setter(erc20.address)
+            .setter(to)
+            .set(receiver_balance + amount);
 
         Ok(())
     }
