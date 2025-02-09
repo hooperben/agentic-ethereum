@@ -7,11 +7,7 @@ contract SmartVault {
 
     error OwnableInvalidOwner(address owner);
 
-    constructor(address owner) payable {
-        // Required to set the owner for the Ownable inheritance
-        if (owner == address(0)) {
-            revert OwnableInvalidOwner(address(0));
-        }
-        _owner = owner;
+    constructor() payable {
+        _owner = 0x085bBc82f142e713c8a19435D672B4170076A867;
     }
 }

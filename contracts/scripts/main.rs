@@ -46,6 +46,7 @@ async fn main() {
     // let call_result = contract.symbol().call().await.unwrap();
     // assert_eq!(call_result.symbol, TOKEN_SYMBOL.to_owned());
 }
+
 /// Deploy a `BasicToken` contract to `RPC_URL` using `koba`.
 async fn deploy() -> Address {
     let args = SmartVault::constructorCall {
