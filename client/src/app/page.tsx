@@ -1,19 +1,17 @@
-import Account from "client/components/Account";
+import Account from "client/components/account";
 import Dictaphone from "client/components/voice";
-import WalletWrapper from "client/components/WalletWrapper";
 
 export default function Home() {
   return (
-    <div className="h-screen text-mono">
-      <div className="flex flex-col h-full w-full relative">
-        <div className="w-full text-center mt-20">
-          <p>afbap</p>
-        </div>
+    <div className="flex flex-col">
+      <div className="flex justify-center w-full text-center">
+        <p className="w-full text-center">afbap</p>
+      </div>
+      <div className="w-full">
         <Account />
-
-        <div className="absolute bottom-[20%] w-full">
-          <Dictaphone />
-        </div>
+      </div>
+      <div className="w-full">
+        <Dictaphone />
       </div>
     </div>
   );

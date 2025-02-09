@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import OnchainProviders from "client/providers/coinbase";
+import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
+import { AppSidebar } from "../components/app-sidebar";
 
 export const metadata: Metadata = {
   title: "Agent Ethereum Hackathon",
@@ -15,7 +17,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <OnchainProviders>
-        <body className="flex flex-col font-mono">{children}</body>
+        <SidebarProvider>
+          <AppSidebar />
+          <body>
+            <main className="flex flex-col w-full">
+              <SidebarTrigger />
+              {children}
+            </main>
+          </body>
+        </SidebarProvider>
       </OnchainProviders>
     </html>
   );
