@@ -5004,6 +5004,7 @@ dependencies = [
 name = "stylus-hello-world"
 version = "0.1.10"
 dependencies = [
+ "alloy",
  "alloy-primitives 0.7.6",
  "alloy-sol-macro 0.7.6",
  "alloy-sol-macro-expander 0.7.6",

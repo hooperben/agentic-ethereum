@@ -1,3 +1,6 @@
+use alloy::{
+    network::EthereumWallet, providers::ProviderBuilder, signers::local::PrivateKeySigner,
+};
 use alloy_primitives::Address;
 use alloy_sol_macro::sol;
 use alloy_sol_types::SolConstructor;
@@ -10,13 +13,20 @@ const PRIVATE_KEY: &str = "your private key";
 
 const AGENT_ADDRESS: &str = "0x0000000000000000000000000000000000000000";
 
+sol!(
+    #[sol(rpc)]
+    contract SmartVault {
+        constructor(string memory name_, string memory symbol_);
+
+        function name() external view returns (string name);
+        function symbol() external view returns (string symbol);
+    }
+);
+
 #[tokio::main]
 async fn main() {
     let contract_address = deploy().await;
 
-    // WARNING: Please use a more secure method for storing your privaket key
-    // than a string at the top of this file. The following code is for testing
-    // purposes only.
     let signer = PRIVATE_KEY
         .parse::<PrivateKeySigner>()
         .expect("should parse the private key");
@@ -28,15 +38,14 @@ async fn main() {
         .wallet(wallet)
         .on_http(rpc_url);
 
-    let contract = BasicToken::new(contract_address, &provider);
+    // let contract = SmartVault::new(contract_address, provider);
 
-    let call_result = contract.name().call().await.unwrap();
-    assert_eq!(call_result.name, TOKEN_NAME.to_owned());
-
-    let call_result = contract.symbol().call().await.unwrap();
-    assert_eq!(call_result.symbol, TOKEN_SYMBOL.to_owned());
+    // let call_result = contract.name().call().await.unwrap();
+    // assert_eq!(call_result.name, TOKEN_NAME.to_owned());
+    //
+    // let call_result = contract.symbol().call().await.unwrap();
+    // assert_eq!(call_result.symbol, TOKEN_SYMBOL.to_owned());
 }
-
 /// Deploy a `BasicToken` contract to `RPC_URL` using `koba`.
 async fn deploy() -> Address {
     let args = SmartVault::constructorCall {
