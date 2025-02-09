@@ -1,8 +1,10 @@
+import Testbed from "client/components/ui/testbed";
 import Dictaphone from "client/components/voice";
 
 export default function Home() {
   return (
     <div className="h-screen text-mono">
+      <Testbed />
       <div className="flex flex-col h-full w-full relative">
         <div className="w-full text-center mt-20">
           <p>afbap</p>

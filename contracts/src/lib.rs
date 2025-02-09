@@ -5,7 +5,7 @@ use alloy_primitives::{address, Address, U160, U256};
 use openzeppelin_stylus::access::ownable;
 use stylus_sdk::{
     call::{self, transfer_eth},
-    contract::{self, address},
+    contract::{self},
     msg,
     prelude::{entrypoint, public, sol_interface, storage, SolidityError},
     storage::{StorageAddress, StorageMap, StorageType, StorageU256, TopLevelStorage},
@@ -141,6 +141,13 @@ impl SmartVault {
 
     fn owner(&self) -> Address {
         self.ownable.owner()
+    }
+}
+
+#[view]
+impl SmartVault {
+    pub fn balance_of(&self, erc20: IERC20, account: Address) -> U256 {
+        self.balances.get(erc20.address).get(account)
     }
 }
 
