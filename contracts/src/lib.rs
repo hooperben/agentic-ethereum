@@ -1,19 +1,19 @@
 #![cfg_attr(not(test), no_main)]
 extern crate alloc;
 
-use alloy_primitives::{Address, U160, U256};
+use alloy_primitives::{address, Address, U160, U256};
 use openzeppelin_stylus::access::ownable;
 use stylus_sdk::{
     call::{self, transfer_eth},
-    contract, msg,
+    contract::{self, address},
+    msg,
     prelude::{entrypoint, public, sol_interface, storage, SolidityError},
-    storage::{StorageMap, StorageU256},
+    storage::{StorageAddress, StorageMap, StorageType, StorageU256, TopLevelStorage},
 };
 
 #[entrypoint]
 #[storage]
 struct SmartVault {
-    #[borrow]
     pub ownable: ownable::Ownable,
 
     // Token -> Owner -> Amount
@@ -141,5 +141,29 @@ impl SmartVault {
 
     fn owner(&self) -> Address {
         self.ownable.owner()
+    }
+}
+
+// const OWNER: StorageAddress = StorageAddress::from(Address::from(U160::from(0x0)));
+
+impl Default for SmartVault {
+    fn default() -> Self {
+        panic!("Owner must be set");
+        // Self {
+        //     ownable: ownable::Ownable { _owner: OWNER },
+        // }
+    }
+}
+
+#[cfg(all(test))]
+mod tests {
+    use alloy_primitives::{address, uint, Address, U256};
+    use stylus_sdk::msg;
+
+    use crate::SmartVault;
+
+    #[motsu::test]
+    fn reads_balance(contract: SmartVault) {
+        assert_eq!(true, false);
     }
 }
