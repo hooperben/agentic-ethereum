@@ -1,20 +1,18 @@
-"use client";
-
-import "./globals.css";
+import {  getDefaultConfig } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { WagmiProvider } from "wagmi";
+import { QueryClient } from "@tanstack/react-query";
+import OnchainProviders from "client/providers/coinbase";
 import {
-  mainnet,
-  polygon,
-  optimism,
   arbitrum,
-  base,
   arbitrumSepolia,
+  base,
+  mainnet,
+  optimism,
+  polygon,
 } from "wagmi/chains";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { AppSidebar } from "../components/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
+import "./globals.css";
 
 const config = getDefaultConfig({
   appName: "My RainbowKit App",
@@ -31,16 +29,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col font-mono">
-        <QueryClientProvider client={queryClient}>
-          <WagmiProvider config={config}>
-            <RainbowKitProvider>
-              <ConnectButton />
+      <OnchainProviders>
+        <SidebarProvider>
+          <AppSidebar />
+          <body>
+            <main className="flex flex-col w-full">
+              <SidebarTrigger />
               {children}
-            </RainbowKitProvider>
-          </WagmiProvider>
-        </QueryClientProvider>
-      </body>
+            </main>
+          </body>
+        </SidebarProvider>
+      </OnchainProviders>
     </html>
   );
 }
